@@ -1,0 +1,100 @@
+service: movies-service
+
+plugins:
+  - serverless-webpack
+  # Uncomment these following two lines when finally deploying:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: eu-central-1
+  # Enable xray
+  tracing:
+    lambda: true
+  # Uncomment the following api gateway configs when finally deploying:
+  #   apiGateway: true
+  # apiGateway:
+  #   restApiId: ${cf:movie-infra.CommonApiGatewayRestApiId}
+  #   restApiRootResourceId: ${cf:movie-infra.CommonApiGatewayRestApiRootResourceId}
+  environment:
+    DEBUG: false
+    MOVIES_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource: "*"
+
+functions:   
+  addBatch:
+    handler: src/handler.addBatch
+    events:
+      - http:
+          path: /movies/batch
+          method: post
+  getAll:
+    handler: src/handler.getAll
+    events:
+      - http:
+          path: /movies
+          method: get   
+          documentation:
+            summary: "Get all entries"
+  movieGet:
+    handler: src/handler.movieGet
+    events:
+      - http:
+          path: /movies/{id}
+          method: get       
+  movieAdd:
+    handler: src/handler.movieAdd
+    events:
+      - http:
+          path: /movies
+          method: post      
+  movieDelete:
+    handler: src/handler.movieDelete
+    events:
+      - http:
+          path: /movies/{id}
+          method: delete  
+          
+resources:
+  Resources:
+    MoviesDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "id"
+            AttributeType: "S"   
+        KeySchema:
+          -
+            # As we use uuid, the type is HASH
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.MOVIES_TABLE}               
+
+# Configurations for the local DynamoDB database
+custom:
+  dynamodb:
+    start:
+      port: 8002
+      inMemory: true
+      migrate: true
+    stages:
+      - dev   

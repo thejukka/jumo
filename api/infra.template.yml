@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template for the common infra
+
+Parameters:
+  Environment:
+    Type: String
+    Description: >
+      Environments such as dev, stage, prod, etc.
+    Default: dev
+  AllowedOrigins:
+    Type: String
+    Description: >
+      Allowed CORS origins (IPs/domains to get calls from) for this environment
+
+Conditions:
+  IsProd: !Equals [ !Ref Environment, prod ]
+
+Resources:
+  CommonApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Name: Movies
+      Description: Movies demo API
+
+  # A dummy deployment to see if it succeeds before the actual deployment
+  CommonApiGatewayMockMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref CommonApiGateway
+      ResourceId: !GetAtt CommonApiGateway.RootResourceId
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+
+  CommonApiGatewayDeployment:
+    # Proceed if the dummy succeeded
+    DependsOn: CommonApiGatewayMockMethod
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      Description: !Sub '${Environment} environment'
+      RestApiId:
+        Ref: CommonApiGateway
+      StageName: !Ref Environment
+
+  GatewayResponseDefault4XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: CommonApiGateway
+
+# Outputs the stack creation
+Outputs:
+  CommonApiGatewayRestApiId:
+    Description: REST API ID of the API gateway
+    Value: !Ref CommonApiGateway
+    Export:
+      Name: !Sub '${AWS::StackName}-rest-api-id'
+  CommonApiGatewayRestApiRootResourceId:
+    Description: REST API root ID of the API gateway
+    Value: !GetAtt CommonApiGateway.RootResourceId
+    Export:
+      Name: !Sub '${AWS::StackName}-rest-api-root-resource-id'
+  AllowedOrigins:
+    Description: Allowed CORS origins for this environment
+    Value: !Ref AllowedOrigins
+    Export:
+      Name: !Sub '${AWS::StackName}-allowed-origins'
+  Environment:
+    Description: Environment name passed in as a paramter
+    Value: !Ref Environment
+    Export:
+      Name: !Sub '${AWS::StackName}-environment'
+  # Deletion policies to ensure that CloudFront doesn't accidentally
+  # remove any production data from DynamoDB (or any possible S3 buckets)
+  DeletionPolicy:
+    Description: Environment specific deletion policy for data storages
+    Value: !If [IsProd, Retain, Delete]
+    Export:
+      Name: !Sub '${AWS::StackName}-deletion-policy'

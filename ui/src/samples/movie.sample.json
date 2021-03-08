@@ -1,0 +1,41 @@
+{
+    "name": "Ghostbusters",
+    "year": 1984,
+    "genres": [
+      "Comedy",
+      "Sci-Fi"
+    ],
+    "ageLimit": 12,
+    "rating": 5,
+    "actors": [
+      {
+        "firstName": "Bill",
+        "lastName": "Murray"
+      },
+      {
+        "firstName": "Harold",
+        "lastName": "Ramis"
+      },
+      {
+        "firstName": "Dan",
+        "lastName": "Akroyd"
+      },
+      {
+        "firstName": "Ernie",
+        "lastName": "Hudson"
+      },
+      {
+        "firstName": "Sigorney",
+        "lastName": "Weaver"
+      },
+      {
+        "firstName": "Rick",
+        "lastName": "Moranis"
+      }
+    ],
+    "director": {
+      "firstName": "Ivan",
+      "lastName": "Reitman"
+    },
+    "synopsis": "Three doctors studying paranormal activities get kicked out from a university and start a business of catching ghosts"
+}

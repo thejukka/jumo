@@ -1,0 +1,27 @@
+{
+  "name": "jumo-api",
+  "version": "1.0.0",
+  "description": "JUMO API backend service",
+  "main": "index.js",
+  "author": "Jukka Kääntä <jukka.kaanta@gmail.com>",
+  "license": "",
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.27",
+    "@types/aws-sdk": "^2.7.0",
+    "@types/node": "^12.0.10",
+    "@types/uuid": "^3.4.4",
+    "ajv": "^7.1.1",
+    "aws-sdk": "^2.852.0",
+    "bluebird": "^3.7.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.20.0",
+    "prettier": "^2.2.1",
+    "serverless-dynamodb-local": "^0.2.39",
+    "serverless-offline": "^6.8.0",
+    "serverless-openapi-documentation": "^0.4.0",
+    "serverless-webpack": "^5.3.5",
+    "webpack": "^5.24.2"
+  }
+}

@@ -1,0 +1,51 @@
+  .box {
+    display: fixed;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .box.jees {
+    width: 100%;
+    background: #aaffaa;
+    color: #007700;
+    box-shadow: 0px 0px 10px rgba(0,180,0,0.8);
+  }
+
+  .box.nou {
+    width: 100%;
+    background: #ffaaaa;
+    color: #770000;
+    box-shadow: 0px 0px 10px rgba(180,0,0,0.3);
+  }
+
+  .stage h1 {
+    text-align: center;
+    padding: 0;
+    margin: 0.2em;
+    color: #6688ff;
+    font-weight: normal;
+    letter-spacing: -2px;
+    word-spacing: 0.2em;
+  }
+
+  .infoRow {
+    display: table;
+    width: 100%;
+    padding: 5px 0px 5px 0px;
+  }
+
+  .infoRow .caption {
+    width: 20%;
+    float: left;
+    font-weight: bold;
+  }
+
+  .infoRow .text {
+    width: 80%;
+    float: right;
+  }
+
+  #viewDialog {
+    width: 400px;
+  }

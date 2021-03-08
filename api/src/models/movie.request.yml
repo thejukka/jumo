@@ -1,0 +1,46 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+description: POST movie data request
+type: object
+required:
+  - name
+  - ageLimit
+properties:
+  name:
+    type: string
+  year:
+    type: integer
+  genres:
+    type: array
+    items:
+      type: string
+  ageLimit:
+    type: integer
+  rating:
+    type: integer
+  actors:
+    type: array
+    items:
+      $ref: "#/definitions/Person"
+  director:
+    type: object
+    $ref: "#/definitions/Person"
+  synopsis:
+    type: string
+  
+additionalProperties: false
+definitions:
+  Reference:
+    type: object
+    required:
+      - $ref
+    patternProperties:
+      '^\$ref$':
+        type: string
+        format: uri-reference
+  Person:
+    type: object
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
